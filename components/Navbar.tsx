@@ -1,0 +1,70 @@
+"use client"
+
+import { useState } from "react"
+import { UserPlus, LogOut } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { motion } from "framer-motion"
+import { NotificationsDropdown } from "./NotificationsDropdown"
+import { UserFormModal } from "./UserFormModal"
+
+export function Navbar() {
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false)
+
+  return (
+    <>
+      <motion.header
+        initial={{ y: -10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-border/60 bg-background/90 px-6 backdrop-blur-xl"
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground shadow-sm">
+            CG
+          </div>
+          <div className="hidden sm:block">
+            <span className="text-[15px] font-semibold tracking-tight text-foreground">CallingGen</span>
+            <span className="ml-1.5 text-xs font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">Admin</span>
+          </div>
+        </div>
+
+        {/* Right side actions */}
+        <div className="flex items-center gap-2">
+          <NotificationsDropdown />
+
+          <Button
+            className="hidden sm:flex gap-2 h-9 px-4 text-sm font-medium shadow-sm hover:shadow-md transition-shadow"
+            onClick={() => setIsUserModalOpen(true)}
+          >
+            <UserPlus className="h-4 w-4" />
+            Create User
+          </Button>
+
+          <div className="h-5 w-px bg-border/80 mx-1" />
+
+          {/* Profile */}
+          <div className="flex items-center gap-2.5 cursor-pointer group pl-1">
+            <div className="hidden sm:flex flex-col items-end">
+              <span className="text-[13px] font-semibold leading-none group-hover:text-primary transition-colors">Admin User</span>
+              <span className="text-[11px] text-muted-foreground mt-0.5">admin@callinggen.com</span>
+            </div>
+            <Avatar className="h-8 w-8 border-2 border-transparent group-hover:border-primary/30 transition-all ring-1 ring-border/50">
+              <AvatarImage alt="Admin" />
+              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">AD</AvatarFallback>
+            </Avatar>
+          </div>
+
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-lg ml-1">
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
+      </motion.header>
+
+      <UserFormModal open={isUserModalOpen} onOpenChange={setIsUserModalOpen} />
+    </>
+  )
+}
+
+
