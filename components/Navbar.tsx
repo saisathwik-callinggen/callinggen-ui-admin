@@ -1,15 +1,40 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
 import { UserPlus, LogOut } from "lucide-react"
+import { motion } from "framer-motion"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { motion } from "framer-motion"
+import { useAuth } from "@/contexts/AuthContext"
 import { NotificationsDropdown } from "./NotificationsDropdown"
 import { UserFormModal } from "./UserFormModal"
 
 export function Navbar() {
+  const router = useRouter()
+  const { user, logout } = useAuth()
   const [isUserModalOpen, setIsUserModalOpen] = useState(false)
+
+  const initials = useMemo(() => {
+    if (!user?.name) return "AD"
+    return user.name
+      .split(" ")
+      .map((part) => part[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase()
+  }, [user?.name])
+
+  const handleLogout = () => {
+    if (!window.confirm("Are you sure you want to sign out?")) {
+      return
+    }
+
+    logout()
+    toast.success("Signed out successfully.")
+    router.replace("/login")
+  }
 
   return (
     <>
@@ -19,7 +44,6 @@ export function Navbar() {
         transition={{ duration: 0.3 }}
         className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-border/60 bg-background/90 px-6 backdrop-blur-xl"
       >
-        {/* Logo */}
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground shadow-sm">
             CG
@@ -30,7 +54,6 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Right side actions */}
         <div className="flex items-center gap-2">
           <NotificationsDropdown />
 
@@ -44,19 +67,25 @@ export function Navbar() {
 
           <div className="h-5 w-px bg-border/80 mx-1" />
 
-          {/* Profile */}
           <div className="flex items-center gap-2.5 cursor-pointer group pl-1">
             <div className="hidden sm:flex flex-col items-end">
-              <span className="text-[13px] font-semibold leading-none group-hover:text-primary transition-colors">Admin User</span>
-              <span className="text-[11px] text-muted-foreground mt-0.5">admin@callinggen.com</span>
+              <span className="text-[13px] font-semibold leading-none group-hover:text-primary transition-colors">
+                {user?.name ?? "Admin User"}
+              </span>
+              <span className="text-[11px] text-muted-foreground mt-0.5">{user?.email ?? "admin@callinggen.ai"}</span>
             </div>
             <Avatar className="h-8 w-8 border-2 border-transparent group-hover:border-primary/30 transition-all ring-1 ring-border/50">
               <AvatarImage alt="Admin" />
-              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">AD</AvatarFallback>
+              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">{initials}</AvatarFallback>
             </Avatar>
           </div>
 
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-lg ml-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-lg ml-1"
+            onClick={handleLogout}
+          >
             <LogOut className="h-4 w-4" />
           </Button>
         </div>
