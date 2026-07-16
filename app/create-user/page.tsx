@@ -126,7 +126,12 @@ export default function CreateUserPage() {
         type: "Regular",
         status: "Active",
         createdAt: new Date().toISOString(),
-        agents: data.agents.map(a => ({ ...a, status: "Active" }))
+        agents: data.agents.map(a => ({ 
+          ...a, 
+          script: a.script || "",
+          knowledgebaseDoc: a.knowledgebaseDoc || "",
+          status: "Active" 
+        }))
       })
       toast.success("User created successfully!")
       router.push("/users")
