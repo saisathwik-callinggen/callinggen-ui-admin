@@ -109,7 +109,12 @@ export function UserFormModal({ open, onOpenChange, userToEdit }: UserFormModalP
     } else {
       addUser({
         id: data.id,
+        name: "Unknown",
         email: data.email,
+        mobile: "N/A",
+        phone: "N/A",
+        industry: "Unknown",
+        provider: "Vobiz",
         organization: data.organization,
         plan: data.plan,
         apiKey: data.apiKey,
