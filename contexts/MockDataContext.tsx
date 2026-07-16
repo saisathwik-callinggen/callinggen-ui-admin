@@ -1,7 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useState } from "react"
-import type { User } from "@/components/UserDetailsDrawer"
+import type { User, Agent } from "@/components/UserDetailsDrawer"
 
 export type Notification = {
   id: string
@@ -48,13 +48,23 @@ interface MockDataContextType {
   addDemoUser: (user: DemoUser) => void
   updateDemoUser: (id: string, data: Partial<DemoUser>) => void
   deleteDemoUser: (id: string) => void
+  convertDemoToUser: (demoUserId: string, plan: User["plan"], credits: number) => void
 }
+
+const NAMES = ["Oliver Bennett", "Sophia Chen", "Marcus Rivera", "Aisha Patel", "Liam Foster", "Emma Nguyen", "James Okafor", "Mia Schmidt", "Noah Williams", "Zara Hassan", "Ethan Park", "Isabella Torres"]
+const ORGS = ["Acme Corp", "TechFlow", "Stark Industries", "Wayne Ent", "Globex", "Initech", "Umbrella Corp", "Cyberdyne", "Oscorp", "Weyland Corp"]
 
 const INITIAL_USERS: User[] = Array.from({ length: 45 }).map((_, i) => ({
   id: `USR-${1000 + i}`,
+  name: NAMES[i % NAMES.length],
   email: `user${i}@example.com`,
+  mobile: `+1 (${String(400 + i).padStart(3, "0")}) 555-0${String(100 + i).padStart(3, "0")}`,
+  phone: `+1 (${String(400 + i).padStart(3, "0")}) 555-0${String(100 + i).padStart(3, "0")}`,
+  password: "password123",
+  industry: "Technology",
+  provider: "Vobiz",
   organization: ["Acme Corp", "TechFlow", "Stark Industries", "Wayne Ent", "Globex"][i % 5],
-  plan: (["Free Tier", "Pro", "Enterprise"] as const)[i % 3],
+  plan: (["Starter", "Standard", "Pro", "Optional"] as const)[i % 4],
   credits: Math.floor(Math.random() * 10000) + (i % 3 === 2 ? 50000 : 0),
   apiKey: `cg_live_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`,
   type: i % 7 === 0 ? "Demo" : "Regular",
@@ -63,12 +73,13 @@ const INITIAL_USERS: User[] = Array.from({ length: 45 }).map((_, i) => ({
   agents: Array.from({ length: (i % 4) }).map((_, j) => ({
     id: `AGT-${Math.floor(Math.random() * 10000)}`,
     name: `Support Bot ${j + 1}`,
+    language: "English",
+    voice: "Female 1",
+    script: "Hello, how can I help you?",
+    knowledgebaseDoc: "",
     status: ["Active", "Inactive", "Error"][j % 3] as any
   }))
 }))
-
-const NAMES = ["Oliver Bennett", "Sophia Chen", "Marcus Rivera", "Aisha Patel", "Liam Foster", "Emma Nguyen", "James Okafor", "Mia Schmidt", "Noah Williams", "Zara Hassan", "Ethan Park", "Isabella Torres"]
-const ORGS = ["Acme Corp", "TechFlow", "Stark Industries", "Wayne Ent", "Globex", "Initech", "Umbrella Corp", "Cyberdyne", "Oscorp", "Weyland Corp"]
 
 const INITIAL_PRICING_REQUESTS: PricingRequest[] = Array.from({ length: 20 }).map((_, i) => ({
   id: `PR-${2000 + i}`,
@@ -124,12 +135,39 @@ export function MockDataProvider({ children }: { children: React.ReactNode }) {
     setDemoUsers(prev => prev.map(u => u.id === id ? { ...u, ...data } : u))
   const deleteDemoUser = (id: string) => setDemoUsers(prev => prev.filter(u => u.id !== id))
 
+  const convertDemoToUser = (demoUserId: string, plan: User["plan"], credits: number) => {
+    const demoUser = demoUsers.find(u => u.id === demoUserId)
+    if (!demoUser) return
+
+    const newUser: User = {
+      id: `USR-${1000 + users.length + 1}`,
+      name: demoUser.name,
+      email: demoUser.email,
+      mobile: demoUser.phone,
+      phone: demoUser.phone,
+      password: "password123", // Dummy password
+      industry: "General",
+      provider: "Vobiz",
+      organization: demoUser.company,
+      plan: plan,
+      credits: credits,
+      apiKey: `cg_live_${Math.random().toString(36).substring(2, 15)}`,
+      type: "Regular",
+      status: "Active",
+      createdAt: new Date().toISOString(),
+      agents: []
+    }
+
+    setUsers(prev => [newUser, ...prev])
+    setDemoUsers(prev => prev.filter(u => u.id !== demoUserId))
+  }
+
   return (
     <MockDataContext.Provider value={{
       users, addUser, updateUser, deleteUser,
       notifications, markAllNotificationsRead,
       pricingRequests, updatePricingRequest,
-      demoUsers, addDemoUser, updateDemoUser, deleteDemoUser,
+      demoUsers, addDemoUser, updateDemoUser, deleteDemoUser, convertDemoToUser,
     }}>
       {children}
     </MockDataContext.Provider>

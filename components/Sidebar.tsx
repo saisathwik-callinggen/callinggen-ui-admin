@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import {
   LayoutDashboard,
   Users,
-  CreditCard,
+  UserPlus,
   UserSquare2,
   ChevronLeft,
   ChevronRight
@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button"
 const navItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "User Management", href: "/users", icon: Users },
-  { name: "Pricing Requests", href: "/pricing", icon: CreditCard },
+  { name: "Create User", href: "/create-user", icon: UserPlus },
   { name: "Demo Users", href: "/demo", icon: UserSquare2 },
 ]
 

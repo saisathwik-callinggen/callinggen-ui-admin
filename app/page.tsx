@@ -1,9 +1,7 @@
 "use client"
 
 import { KPICards } from "@/components/KPICards"
-import { AnalyticsCharts } from "@/components/AnalyticsCharts"
 import { RecentActivity } from "@/components/RecentActivity"
-import { SystemHealth } from "@/components/SystemHealth"
 import { motion } from "framer-motion"
 
 export default function DashboardPage() {
@@ -25,9 +23,9 @@ export default function DashboardPage() {
 
       <div className="space-y-6">
         <KPICards />
-        <AnalyticsCharts />
-        <RecentActivity />
-        <SystemHealth />
+        <div className="grid grid-cols-1 gap-6">
+          <RecentActivity />
+        </div>
       </div>
     </div>
   )

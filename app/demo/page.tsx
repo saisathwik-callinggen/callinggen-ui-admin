@@ -100,15 +100,27 @@ function DemoUserEditModal({ user, open, onOpenChange }: {
   open: boolean
   onOpenChange: (v: boolean) => void
 }) {
-  const { updateDemoUser } = useMockData()
+  const { updateDemoUser, convertDemoToUser } = useMockData()
   const [status, setStatus] = useState<DemoUser["status"]>(user?.status ?? "Pending")
   const [notes, setNotes] = useState(user?.notes ?? "")
+  const [plan, setPlan] = useState<"Demo" | "Starter" | "Standard" | "Pro" | "Optional">("Demo")
 
   if (!user) return null
 
   const handleSave = () => {
-    updateDemoUser(user.id, { status, notes })
-    toast.success("Demo user updated successfully")
+    if (plan !== "Demo") {
+      let credits = 50
+      if (plan === "Starter") credits = 500
+      if (plan === "Standard") credits = 2000
+      if (plan === "Pro") credits = 5000
+      if (plan === "Optional") credits = 0 // Custom/optional, default 0
+
+      convertDemoToUser(user.id, plan, credits)
+      toast.success(`Demo user converted to ${plan} plan successfully`)
+    } else {
+      updateDemoUser(user.id, { status, notes })
+      toast.success("Demo user updated successfully")
+    }
     onOpenChange(false)
   }
 
@@ -129,6 +141,21 @@ function DemoUserEditModal({ user, open, onOpenChange }: {
             >
               {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Convert Plan</label>
+            <select
+              value={plan}
+              onChange={e => setPlan(e.target.value as any)}
+              className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <option value="Demo">Keep as Demo</option>
+              <option value="Starter">Starter (500 credits)</option>
+              <option value="Standard">Standard (2000 credits)</option>
+              <option value="Pro">Pro (5000 credits)</option>
+              <option value="Optional">Optional (Custom)</option>
+            </select>
+            <p className="text-xs text-muted-foreground mt-1">Select a paid plan to convert this demo user to a regular user.</p>
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Notes</label>

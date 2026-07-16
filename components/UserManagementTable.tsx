@@ -56,9 +56,11 @@ export function UserManagementTable() {
         return (
           <span className={cn(
             "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-            plan === "Enterprise" && "bg-primary/10 text-primary",
-            plan === "Pro" && "bg-blue-500/10 text-blue-600",
-            plan === "Free Tier" && "bg-slate-500/10 text-slate-600",
+            plan === "Pro" && "bg-primary/10 text-primary",
+            plan === "Standard" && "bg-blue-500/10 text-blue-600",
+            plan === "Starter" && "bg-emerald-500/10 text-emerald-600",
+            plan === "Optional" && "bg-slate-500/10 text-slate-600",
+            plan === "Demo" && "bg-amber-500/10 text-amber-600",
           )}>
             {plan}
           </span>

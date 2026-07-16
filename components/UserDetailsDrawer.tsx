@@ -12,14 +12,24 @@ import { DeleteConfirmModal } from "./DeleteConfirmModal"
 export type Agent = {
   id: string
   name: string
+  language: string
+  voice: string
+  script: string
+  knowledgebaseDoc: string
   status: "Active" | "Inactive" | "Error"
 }
 
 export type User = {
   id: string
+  name: string
   email: string
+  mobile: string
+  phone: string
+  password?: string
+  industry: string
+  provider: string
   organization: string
-  plan: "Free Tier" | "Pro" | "Enterprise"
+  plan: "Starter" | "Standard" | "Pro" | "Optional" | "Demo"
   credits: number
   apiKey: string
   type: "Regular" | "Demo"
@@ -103,20 +113,42 @@ export function UserDetailsDrawer({ user, isOpen, onClose }: UserDetailsDrawerPr
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Name</p>
+                      <p className="font-medium text-sm">{user.name}</p>
+                    </div>
+                    <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Organization</p>
                       <p className="font-medium text-sm">{user.organization}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Industry</p>
+                      <p className="font-medium text-sm">{user.industry}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Email</p>
                       <p className="font-medium text-sm">{user.email}</p>
                     </div>
                     <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Mobile</p>
+                      <p className="font-medium text-sm">{user.mobile}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Phone</p>
+                      <p className="font-medium text-sm">{user.phone}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Provider</p>
+                      <p className="font-medium text-sm">{user.provider}</p>
+                    </div>
+                    <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Plan</p>
                       <span className={cn(
                         "inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold",
-                        user.plan === "Enterprise" && "bg-primary/10 text-primary",
-                        user.plan === "Pro" && "bg-blue-500/10 text-blue-600",
-                        user.plan === "Free Tier" && "bg-slate-500/10 text-slate-600",
+                        user.plan === "Pro" && "bg-primary/10 text-primary",
+                        user.plan === "Standard" && "bg-blue-500/10 text-blue-600",
+                        user.plan === "Starter" && "bg-emerald-500/10 text-emerald-600",
+                        user.plan === "Optional" && "bg-slate-500/10 text-slate-600",
+                        user.plan === "Demo" && "bg-amber-500/10 text-amber-600",
                       )}>
                         {user.plan}
                       </span>
@@ -171,16 +203,29 @@ export function UserDetailsDrawer({ user, isOpen, onClose }: UserDetailsDrawerPr
                               <div className="p-2 rounded-lg bg-primary/10 text-primary">
                                 <Bot className="h-4 w-4" />
                               </div>
-                              <div>
+                              <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium leading-none mb-1">{agent.name}</p>
-                                <p className="text-xs text-muted-foreground">{agent.id}</p>
+                                <p className="text-xs text-muted-foreground mb-1">
+                                  {agent.language} • {agent.voice}
+                                </p>
+                                <p className="text-xs text-muted-foreground truncate" title={agent.script}>
+                                  "{agent.script}"
+                                </p>
+                                {agent.knowledgebaseDoc && (
+                                  <p className="text-xs text-blue-600 mt-1 truncate">
+                                    KB: {agent.knowledgebaseDoc}
+                                  </p>
+                                )}
                               </div>
                             </div>
-                            <div className={cn(
-                              "h-2.5 w-2.5 rounded-full",
-                              agent.status === "Active" ? "bg-emerald-500" : 
-                              agent.status === "Inactive" ? "bg-slate-300" : "bg-destructive"
-                            )} title={agent.status} />
+                            <div className="flex flex-col items-end gap-2">
+                              <div className={cn(
+                                "h-2.5 w-2.5 rounded-full",
+                                agent.status === "Active" ? "bg-emerald-500" : 
+                                agent.status === "Inactive" ? "bg-slate-300" : "bg-destructive"
+                              )} title={agent.status} />
+                              <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{agent.status}</span>
+                            </div>
                           </CardContent>
                         </Card>
                       ))}
